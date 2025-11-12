@@ -10,7 +10,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   completeChannelAuth: (channelId) => ipcRenderer.invoke('complete-channel-auth', channelId),
   uploadVideo: (uploadData) => ipcRenderer.invoke('upload-video', uploadData),
   navigate: (page) => ipcRenderer.invoke('navigate', page),
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
   onUploadProgress: (callback) => {
     ipcRenderer.on('upload-progress', (event, progress) => callback(progress));
-  }
+  },
+  // Preset APIs
+  getPresets: () => ipcRenderer.invoke('get-presets'),
+  addPreset: (presetData) => ipcRenderer.invoke('add-preset', presetData),
+  updatePreset: (presetId, presetData) => ipcRenderer.invoke('update-preset', presetId, presetData),
+  deletePreset: (presetId) => ipcRenderer.invoke('delete-preset', presetId),
+  getPreset: (presetId) => ipcRenderer.invoke('get-preset', presetId)
 });

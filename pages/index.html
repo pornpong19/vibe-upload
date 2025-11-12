@@ -34,6 +34,38 @@
       </div>
     </div>
 
+    <!-- Presets Section -->
+    <div class="card">
+      <h2 class="card-title">พรีเซ็ต (Preset)</h2>
+
+      <div class="preset-controls">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">เลือกพรีเซ็ต</label>
+          <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+            <select class="form-select" id="presetSelect" style="flex: 1;">
+              <option value="">-- เลือกพรีเซ็ต --</option>
+            </select>
+            <button class="btn-preset-delete" onclick="deletePreset()">
+              <span class="btn-icon">🗑️</span>
+              <span>ลบ</span>
+            </button>
+          </div>
+          <p class="input-hint" style="margin-top: 0.5rem;">เลือกเพื่อนำค่ามาใช้อัตโนมัติ</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">บันทึกพรีเซ็ตใหม่</label>
+          <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+            <input type="text" class="form-input" id="presetName" placeholder="ชื่อพรีเซ็ต เช่น Gaming, Vlog, Tutorial" style="flex: 1;">
+            <button class="btn-preset-save" onclick="savePreset()">
+              <span class="btn-icon">💾</span>
+              <span>บันทึก</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Video Details Form -->
     <div class="card">
       <h2 class="card-title">รายละเอียดวิดีโอ</h2>
@@ -49,8 +81,15 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">แท็ก (คั่นด้วยจุลภาค)</label>
-        <input type="text" class="form-input" id="videoTags" placeholder="แท็ก1, แท็ก2, แท็ก3">
+        <label class="form-label">
+          แท็ก
+          <span class="char-counter" id="tagsCharCounter">0/500</span>
+        </label>
+        <div class="tags-input-container">
+          <div class="tags-display" id="tagsDisplay"></div>
+          <input type="text" class="tags-input" id="videoTags" placeholder="พิมพ์แท็กแล้วกด Enter หรือจุลภาค">
+        </div>
+        <p class="input-hint">กด Enter หรือพิมพ์จุลภาคเพื่อเพิ่มแท็ก (สูงสุด 500 ตัวอักษร)</p>
       </div>
 
       <div class="grid-2">
@@ -86,13 +125,18 @@
 
       <div class="form-group">
         <label class="form-label">ตั้งเวลาเผยแพร่ล่วงหน้า (ไม่บังคับ)</label>
-        <input type="datetime-local" class="form-input" id="scheduleTime">
-      </div>
-
-      <div class="form-group">
-        <div class="checkbox-group">
-          <input type="checkbox" id="madeForKids">
-          <label for="madeForKids">วิดีโอนี้สำหรับเด็ก (Made for Kids)</label>
+        <p class="input-hint" style="margin-top: 0; margin-bottom: 0.5rem;">หมายเหตุ: การตั้งเวลาต้องเปลี่ยนสถานะเป็น "ส่วนตัว" เท่านั้น</p>
+        <div class="grid-2">
+          <div>
+            <label class="form-label-small">วันที่</label>
+            <input type="date" class="form-input" id="scheduleDate">
+          </div>
+          <div>
+            <label class="form-label-small">เวลา</label>
+            <select class="form-select" id="scheduleTime">
+              <option value="">-- เลือกเวลา --</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

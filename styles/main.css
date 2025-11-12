@@ -114,6 +114,14 @@ body {
   font-size: 0.9rem;
 }
 
+.form-label-small {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.8rem;
+}
+
 .form-input,
 .form-textarea,
 .form-select {
@@ -331,6 +339,25 @@ body {
   margin-top: 0.5rem;
 }
 
+.text-success .video-link,
+.video-link {
+  color: var(--primary-red);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  word-break: break-all;
+  display: inline-block;
+  margin-top: 0.25rem;
+}
+
+.text-success .video-link:hover,
+.video-link:hover {
+  color: var(--dark-red);
+  border-bottom-color: var(--dark-red);
+  transform: translateX(2px);
+}
+
 .hidden {
   display: none;
 }
@@ -356,4 +383,182 @@ body {
 .radio-group label {
   cursor: pointer;
   font-weight: 500;
+}
+
+/* Tags Input */
+.tags-input-container {
+  border: 2px solid var(--gray);
+  border-radius: 4px;
+  padding: 0.5rem;
+  min-height: 80px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+  background-color: var(--white);
+  transition: border-color 0.3s ease;
+}
+
+.tags-input-container:focus-within {
+  border-color: var(--primary-red);
+}
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+  color: var(--white);
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  animation: tagSlideIn 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.tag-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+.tag-chip-remove {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.tag-chip-remove:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.tags-input {
+  flex: 1;
+  min-width: 150px;
+  border: none;
+  outline: none;
+  padding: 0.4rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.tags-input::placeholder {
+  color: var(--dark-gray);
+}
+
+.char-counter {
+  float: right;
+  font-size: 0.85rem;
+  color: var(--dark-gray);
+  font-weight: 500;
+  background-color: var(--light-gray);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+}
+
+.char-counter.warning {
+  color: #d97706;
+  background-color: #fef3c7;
+}
+
+.char-counter.danger {
+  color: var(--primary-red);
+  background-color: #fee2e2;
+  font-weight: 600;
+}
+
+.input-hint {
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+@keyframes tagSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Preset Controls */
+.preset-controls {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+  border-radius: 8px;
+  border: 2px solid var(--gray);
+}
+
+/* Preset Buttons */
+.btn-preset-delete,
+.btn-preset-save {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-preset-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-preset-delete:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.4);
+}
+
+.btn-preset-save {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-preset-save:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.btn-preset-delete:active,
+.btn-preset-save:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
 }

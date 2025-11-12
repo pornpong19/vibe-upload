@@ -1,8 +1,9 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
 const uploadHandler = require('./src/upload-handler');
 const channelsManager = require('./src/channels-manager');
+const presetManager = require('./src/preset-manager');
 
 let mainWindow;
 
@@ -99,4 +100,29 @@ ipcMain.handle('upload-video', async (event, uploadData) => {
 
 ipcMain.handle('navigate', (event, page) => {
   mainWindow.loadFile(`pages/${page}.html`);
+});
+
+ipcMain.handle('open-external', async (event, url) => {
+  await shell.openExternal(url);
+});
+
+// Preset handlers
+ipcMain.handle('get-presets', async () => {
+  return await presetManager.getPresets();
+});
+
+ipcMain.handle('add-preset', async (event, presetData) => {
+  return await presetManager.addPreset(presetData);
+});
+
+ipcMain.handle('update-preset', async (event, presetId, presetData) => {
+  return await presetManager.updatePreset(presetId, presetData);
+});
+
+ipcMain.handle('delete-preset', async (event, presetId) => {
+  return await presetManager.deletePreset(presetId);
+});
+
+ipcMain.handle('get-preset', async (event, presetId) => {
+  return await presetManager.getPreset(presetId);
 });
