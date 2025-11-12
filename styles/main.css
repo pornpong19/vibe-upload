@@ -172,6 +172,7 @@ body {
   text-align: center;
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .file-upload-area:hover {
@@ -183,6 +184,30 @@ body {
   border-color: var(--primary-red);
   border-style: solid;
   background-color: #fef2f2;
+}
+
+.file-upload-area.drag-over {
+  border-color: var(--primary-red);
+  border-style: solid;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(220, 38, 38, 0.2);
+}
+
+.file-upload-area.drag-over::after {
+  content: "📥 วางไฟล์ที่นี่";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-red);
+  background-color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
 }
 
 .file-name {

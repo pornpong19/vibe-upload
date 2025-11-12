@@ -67,6 +67,7 @@ async function addPreset(presetData) {
   const newPreset = {
     id: Date.now().toString(),
     name: presetData.name,
+    title: presetData.title || '',
     description: presetData.description || '',
     tags: presetData.tags || [],
     categoryId: presetData.categoryId || '1',
@@ -100,6 +101,7 @@ async function updatePreset(presetId, presetData) {
   presets[index] = {
     ...presets[index],
     name: presetData.name,
+    title: presetData.title || '',
     description: presetData.description || '',
     tags: presetData.tags || [],
     categoryId: presetData.categoryId || '1',

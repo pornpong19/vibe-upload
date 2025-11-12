@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initTagsInput();
   initScheduleTimeOptions();
   initScheduleValidation();
+  initDragAndDrop();
 });
 
 // Navigate to channels page
@@ -243,12 +244,14 @@ async function savePreset() {
   }
 
   // Get current form values
+  const title = document.getElementById('videoTitle').value.trim();
   const description = document.getElementById('videoDescription').value.trim();
   const categoryId = document.getElementById('videoCategory').value;
   const privacyStatus = document.getElementById('videoPrivacy').value;
 
   const presetData = {
     name: presetName,
+    title: title,
     description: description,
     tags: tags, // Use current tags array
     categoryId: categoryId,
@@ -287,6 +290,7 @@ async function loadPreset() {
       const preset = result.preset;
 
       // Apply preset to form
+      document.getElementById('videoTitle').value = preset.title || '';
       document.getElementById('videoDescription').value = preset.description || '';
       document.getElementById('videoCategory').value = preset.categoryId || '1';
       document.getElementById('videoPrivacy').value = preset.privacyStatus || 'public';
@@ -373,31 +377,91 @@ async function loadChannels() {
   }
 }
 
+// Initialize drag and drop
+function initDragAndDrop() {
+  const uploadArea = document.getElementById('videoUploadArea');
+
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+  });
+
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.add('drag-over');
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.remove('drag-over');
+    }, false);
+  });
+
+  // Handle dropped files
+  uploadArea.addEventListener('drop', handleDrop, false);
+}
+
+// Prevent default drag behaviors
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+// Handle dropped files
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+
+  if (files.length > 0) {
+    handleVideoFile(files[0]);
+  }
+}
+
+// Handle video file (for both drag-drop and click selection)
+function handleVideoFile(file) {
+  // Check if it's a video file
+  const videoExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.webm'];
+  const fileName = file.name || file.path.split('\\').pop().split('/').pop();
+  const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+  if (!videoExtensions.includes(fileExtension)) {
+    showError('กรุณาเลือกไฟล์วิดีโอที่รองรับ (MP4, MOV, AVI, MKV, WEBM)');
+    return;
+  }
+
+  // For drag-drop, file.path is the actual path
+  // For click selection, we get the path from electron dialog
+  selectedVideoPath = file.path || file;
+
+  // Update UI
+  document.getElementById('uploadPlaceholder').classList.add('hidden');
+  document.getElementById('uploadSelected').classList.remove('hidden');
+  document.getElementById('videoUploadArea').classList.add('has-file');
+
+  document.getElementById('videoFileName').textContent = fileName;
+
+  // Auto-fill title if empty
+  const titleInput = document.getElementById('videoTitle');
+  if (!titleInput.value) {
+    const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+    titleInput.value = nameWithoutExt;
+  }
+
+  updateUploadButton();
+}
+
 // Select video
 async function selectVideo() {
   try {
     const videoPath = await window.electronAPI.selectVideo();
 
     if (videoPath) {
-      selectedVideoPath = videoPath;
-
-      // Update UI
-      document.getElementById('uploadPlaceholder').classList.add('hidden');
-      document.getElementById('uploadSelected').classList.remove('hidden');
-      document.getElementById('videoUploadArea').classList.add('has-file');
-
-      // Extract filename
+      // Create a file-like object for consistency
       const fileName = videoPath.split('\\').pop().split('/').pop();
-      document.getElementById('videoFileName').textContent = fileName;
-
-      // Auto-fill title if empty
-      const titleInput = document.getElementById('videoTitle');
-      if (!titleInput.value) {
-        const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
-        titleInput.value = nameWithoutExt;
-      }
-
-      updateUploadButton();
+      handleVideoFile({ path: videoPath, name: fileName });
     }
   } catch (error) {
     console.error('Error selecting video:', error);
