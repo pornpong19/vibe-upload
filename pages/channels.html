@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการช่อง - Vibe Upload</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Vibe Upload</div>
+    <button class="nav-btn" onclick="navigateToHome()">กลับหน้าแรก</button>
+  </div>
+
+  <div class="container">
+    <!-- Add Channel Section -->
+    <div class="card">
+      <h2 class="card-title">เพิ่มช่อง YouTube</h2>
+
+      <div class="form-group">
+        <label class="form-label">อัพโหลด credentials.json</label>
+        <p style="font-size: 0.85rem; color: var(--dark-gray); margin-bottom: 1rem;">
+          ไฟล์ credentials.json คือไฟล์ที่ได้จาก Google Cloud Console สำหรับเชื่อมต่อกับ YouTube API
+        </p>
+
+        <div class="file-upload-area" id="credentialsUploadArea" onclick="selectCredentials()">
+          <div id="credentialsPlaceholder">
+            <p style="font-size: 3rem; margin-bottom: 0.5rem;">📄</p>
+            <p style="font-weight: 600; color: var(--primary-red);">คลิกเพื่อเลือก credentials.json</p>
+            <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+              รองรับเฉพาะไฟล์ .json
+            </p>
+          </div>
+          <div id="credentialsSelected" class="hidden">
+            <p style="font-size: 3rem; margin-bottom: 0.5rem;">✅</p>
+            <p class="file-name" id="credentialsFileName"></p>
+            <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+              คลิกเพื่อเลือกไฟล์ใหม่
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="addChannelBtn" onclick="addChannel()" disabled>
+        เชื่อมต่อและเพิ่มช่อง
+      </button>
+
+      <p class="text-success hidden" id="addSuccessMessage"></p>
+      <p class="text-error" id="addErrorMessage"></p>
+    </div>
+
+    <!-- Channels List -->
+    <div class="card">
+      <h2 class="card-title">ช่อง YouTube ที่เชื่อมต่อแล้ว</h2>
+
+      <div id="channelsListContainer">
+        <p style="text-align: center; color: var(--dark-gray); padding: 2rem;">
+          ยังไม่มีช่องที่เชื่อมต่อ
+        </p>
+      </div>
+
+      <ul class="channel-list hidden" id="channelsList"></ul>
+    </div>
+
+    <!-- Instructions -->
+    <div class="card">
+      <h2 class="card-title">วิธีการใช้งาน</h2>
+      <ol style="padding-left: 1.5rem; line-height: 2;">
+        <li>ไปที่ <strong>Google Cloud Console</strong> และสร้างโปรเจค</li>
+        <li>เปิดใช้งาน <strong>YouTube Data API v3</strong></li>
+        <li>สร้าง <strong>OAuth 2.0 Client ID</strong> (Desktop app)</li>
+        <li><strong>เพิ่ม Authorized redirect URI:</strong> <code style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 3px;">http://localhost:3000</code></li>
+        <li>ดาวน์โหลดไฟล์ credentials.json</li>
+        <li>อัพโหลดไฟล์ credentials.json ที่นี่และคลิก "เชื่อมต่อและเพิ่มช่อง"</li>
+        <li><strong>เบราว์เซอร์จะเปิดขึ้นอัตโนมัติ</strong> เพื่อให้คุณยืนยันตัวตน</li>
+        <li>เลือกบัญชี Google และอนุญาตการเข้าถึง</li>
+        <li>เมื่อเห็นข้อความสำเร็จ ปิดเบราว์เซอร์และกลับมาที่แอป</li>
+        <li>ช่องจะปรากฏในรายการด้านบนทันที</li>
+      </ol>
+      <p style="margin-top: 1rem; padding: 1rem; background-color: #fef2f2; border-left: 4px solid var(--primary-red); font-size: 0.9rem;">
+        <strong>สำคัญ!</strong> ต้องตั้งค่า Redirect URI เป็น <code>http://localhost:3000</code> ใน Google Cloud Console ไม่เช่นนั้นจะเชื่อมต่อไม่ได้
+      </p>
+      <p style="margin-top: 0.5rem; padding: 1rem; background-color: #f0f9ff; border-left: 4px solid #0284c7; font-size: 0.9rem;">
+        <strong>หมายเหตุ:</strong> ไฟล์ credentials.json และ tokens ของแต่ละช่องจะถูกเก็บแยกกัน และจะใช้ในการอัพโหลดวิดีโอไปยังช่องนั้นๆ
+      </p>
+    </div>
+  </div>
+
+  <script src="../renderer/channels-renderer.js"></script>
+</body>
+</html>

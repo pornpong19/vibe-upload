@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Upload - YouTube Video Uploader</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Vibe Upload</div>
+    <button class="nav-btn" onclick="navigateToChannels()">จัดการช่อง</button>
+  </div>
+
+  <div class="container">
+    <!-- Video Selection -->
+    <div class="card">
+      <h2 class="card-title">เลือกวิดีโอ</h2>
+      <div class="file-upload-area" id="videoUploadArea" onclick="selectVideo()">
+        <div id="uploadPlaceholder">
+          <p style="font-size: 3rem; margin-bottom: 0.5rem;">📹</p>
+          <p style="font-weight: 600; color: var(--primary-red);">คลิกเพื่อเลือกวิดีโอ</p>
+          <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+            รองรับไฟล์: MP4, MOV, AVI, MKV, WEBM
+          </p>
+        </div>
+        <div id="uploadSelected" class="hidden">
+          <p style="font-size: 3rem; margin-bottom: 0.5rem;">✅</p>
+          <p class="file-name" id="videoFileName"></p>
+          <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+            คลิกเพื่อเลือกวิดีโอใหม่
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Details Form -->
+    <div class="card">
+      <h2 class="card-title">รายละเอียดวิดีโอ</h2>
+
+      <div class="form-group">
+        <label class="form-label">ชื่อวิดีโอ *</label>
+        <input type="text" class="form-input" id="videoTitle" placeholder="กรอกชื่อวิดีโอ" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">คำอธิบาย</label>
+        <textarea class="form-textarea" id="videoDescription" placeholder="กรอกคำอธิบายวิดีโอ"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">แท็ก (คั่นด้วยจุลภาค)</label>
+        <input type="text" class="form-input" id="videoTags" placeholder="แท็ก1, แท็ก2, แท็ก3">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">หมวดหมู่</label>
+          <select class="form-select" id="videoCategory">
+            <option value="1">Film & Animation</option>
+            <option value="2">Autos & Vehicles</option>
+            <option value="10">Music</option>
+            <option value="15">Pets & Animals</option>
+            <option value="17">Sports</option>
+            <option value="19">Travel & Events</option>
+            <option value="20">Gaming</option>
+            <option value="22">People & Blogs</option>
+            <option value="23">Comedy</option>
+            <option value="24">Entertainment</option>
+            <option value="25">News & Politics</option>
+            <option value="26">Howto & Style</option>
+            <option value="27">Education</option>
+            <option value="28">Science & Technology</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">สถานะ</label>
+          <select class="form-select" id="videoPrivacy">
+            <option value="public">สาธารณะ (Public)</option>
+            <option value="unlisted">ไม่อยู่ในรายการ (Unlisted)</option>
+            <option value="private">ส่วนตัว (Private)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ตั้งเวลาเผยแพร่ล่วงหน้า (ไม่บังคับ)</label>
+        <input type="datetime-local" class="form-input" id="scheduleTime">
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="madeForKids">
+          <label for="madeForKids">วิดีโอนี้สำหรับเด็ก (Made for Kids)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="card">
+      <h2 class="card-title">อัพโหลดวิดีโอ</h2>
+
+      <div class="form-group">
+        <label class="form-label">เลือกช่อง YouTube *</label>
+        <select class="form-select" id="channelSelect">
+          <option value="">-- เลือกช่อง --</option>
+        </select>
+        <p class="text-error" id="channelError"></p>
+      </div>
+
+      <button class="btn" id="uploadBtn" onclick="startUpload()" disabled>
+        อัพโหลดวิดีโอ
+      </button>
+
+      <div class="progress-container hidden" id="progressContainer">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%;">
+            0%
+          </div>
+        </div>
+        <p class="text-center mt-2" id="progressStatus">กำลังอัพโหลด...</p>
+      </div>
+
+      <p class="text-success hidden" id="successMessage"></p>
+      <p class="text-error" id="errorMessage"></p>
+    </div>
+  </div>
+
+  <script src="../renderer/index-renderer.js"></script>
+</body>
+</html>
