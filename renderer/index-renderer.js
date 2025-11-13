@@ -21,6 +21,11 @@ function navigateToChannels() {
   window.electronAPI.navigate('channels');
 }
 
+// Navigate to bulk upload page
+function navigateToBulkUpload() {
+  window.electronAPI.navigate('bulk-upload');
+}
+
 // Initialize tags input
 function initTagsInput() {
   const tagsInput = document.getElementById('videoTags');

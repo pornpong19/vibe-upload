@@ -58,6 +58,20 @@ ipcMain.handle('select-video', async () => {
   return null;
 });
 
+ipcMain.handle('select-multiple-videos', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile', 'multiSelections'],
+    filters: [
+      { name: 'Videos', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths;
+  }
+  return null;
+});
+
 ipcMain.handle('select-credentials', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],

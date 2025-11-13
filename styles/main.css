@@ -416,10 +416,7 @@ body {
   border-radius: 4px;
   padding: 0.5rem;
   min-height: 80px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: flex-start;
+  display: block;
   background-color: var(--white);
   transition: border-color 0.3s ease;
 }
@@ -432,8 +429,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .tag-chip {
@@ -476,8 +473,7 @@ body {
 }
 
 .tags-input {
-  flex: 1;
-  min-width: 150px;
+  width: 100%;
   border: none;
   outline: none;
   padding: 0.4rem;
@@ -586,4 +582,93 @@ body {
   font-size: 1.1rem;
   display: inline-flex;
   align-items: center;
+}
+
+/* Bulk Upload Styles */
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.video-item {
+  background-color: var(--light-gray);
+  border: 2px solid var(--gray);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.video-item:hover {
+  background-color: var(--white);
+  border-color: var(--primary-red);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.video-item-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--gray);
+}
+
+.video-number {
+  background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  min-width: 45px;
+  text-align: center;
+}
+
+.video-filename {
+  flex: 1;
+  font-weight: 600;
+  color: var(--text-dark);
+  word-break: break-word;
+}
+
+.btn-small {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.video-item-body {
+  padding-top: 0.5rem;
+}
+
+.video-status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.video-status-uploading {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 2px solid #fbbf24;
+}
+
+.video-status-success {
+  background-color: #d1fae5;
+  color: #059669;
+  border: 2px solid #10b981;
+}
+
+.video-status-error {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 2px solid #ef4444;
 }

@@ -27,6 +27,10 @@ function navigateToHome() {
   window.electronAPI.navigate('index');
 }
 
+function navigateToBulkUpload() {
+  window.electronAPI.navigate('bulk-upload');
+}
+
 // Select credentials file
 async function selectCredentials() {
   try {

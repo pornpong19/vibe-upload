@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   selectVideo: () => ipcRenderer.invoke('select-video'),
+  selectMultipleVideos: () => ipcRenderer.invoke('select-multiple-videos'),
   selectCredentials: () => ipcRenderer.invoke('select-credentials'),
   getChannels: () => ipcRenderer.invoke('get-channels'),
   addChannel: (credentialsPath) => ipcRenderer.invoke('add-channel', credentialsPath),

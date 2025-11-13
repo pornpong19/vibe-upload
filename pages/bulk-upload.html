@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>อัพโหลดหลายวิดีโอ - Vibe Upload</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Vibe Upload</div>
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="nav-btn" onclick="navigateToIndex()">อัพโหลดเดี่ยว</button>
+      <button class="nav-btn" onclick="navigateToChannels()">จัดการช่อง</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 style="margin-bottom: 1.5rem;">อัพโหลดหลายวิดีโอพร้อมกัน</h1>
+
+    <!-- Video Selection -->
+    <div class="card">
+      <h2 class="card-title">เลือกวิดีโอ</h2>
+      <div class="file-upload-area" id="videoUploadArea" onclick="selectMultipleVideos()">
+        <div id="uploadPlaceholder">
+          <p style="font-size: 3rem; margin-bottom: 0.5rem;">📹</p>
+          <p style="font-weight: 600; color: var(--primary-red);">คลิกเพื่อเลือกหลายวิดีโอ หรือ ลากไฟล์มาวางที่นี่</p>
+          <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+            รองรับไฟล์: MP4, MOV, AVI, MKV, WEBM (สามารถเลือกหลายไฟล์)
+          </p>
+        </div>
+        <div id="uploadSelected" class="hidden">
+          <p style="font-size: 3rem; margin-bottom: 0.5rem;">✅</p>
+          <p class="file-name">เลือกแล้ว <span id="videoCount">0</span> วิดีโอ</p>
+          <p style="font-size: 0.85rem; color: var(--dark-gray); margin-top: 0.5rem;">
+            คลิกเพื่อเลือกวิดีโอเพิ่มเติม หรือ ลากไฟล์มาวางที่นี่
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Settings -->
+    <div class="card">
+      <h2 class="card-title">ตั้งค่าสำหรับทุกวิดีโอ</h2>
+
+      <div class="form-group">
+        <label class="form-label">เลือกช่อง YouTube *</label>
+        <select class="form-select" id="bulkChannel">
+          <option value="">-- เลือกช่อง --</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">พรีเซ็ตเริ่มต้น</label>
+          <select class="form-select" id="bulkPreset">
+            <option value="">-- ไม่ใช้พรีเซ็ต --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">สถานะเริ่มต้น</label>
+          <select class="form-select" id="bulkPrivacy">
+            <option value="public">สาธารณะ (Public)</option>
+            <option value="unlisted">ไม่อยู่ในรายการ (Unlisted)</option>
+            <option value="private">ส่วนตัว (Private)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" onclick="applyBulkSettings()">ใช้การตั้งค่านี้กับทุกวิดีโอ</button>
+    </div>
+
+    <!-- Videos List -->
+    <div class="card" id="videosListCard" style="display: none;">
+      <h2 class="card-title">รายการวิดีโอ (<span id="totalVideos">0</span> วิดีโอ)</h2>
+      <div id="videosList"></div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid var(--gray);">
+        <button class="btn" id="uploadAllBtn" onclick="startBulkUpload()" disabled>
+          เริ่มอัพโหลดทั้งหมด
+        </button>
+
+        <div class="progress-container hidden" id="bulkProgressContainer" style="margin-top: 1rem;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="bulkProgressFill" style="width: 0%;">
+              0%
+            </div>
+          </div>
+          <p class="text-center mt-2" id="bulkProgressStatus">กำลังอัพโหลด...</p>
+        </div>
+
+        <p class="text-success hidden" id="bulkSuccessMessage"></p>
+        <p class="text-error" id="bulkErrorMessage"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../renderer/bulk-upload-renderer.js"></script>
+</body>
+</html>
