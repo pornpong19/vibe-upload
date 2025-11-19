@@ -61,6 +61,54 @@ body {
   color: var(--white);
 }
 
+/* Tab Buttons */
+.tab-buttons {
+  display: flex;
+  gap: 0;
+  background-color: var(--light-gray);
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 2px solid var(--gray);
+}
+
+.tab-btn {
+  flex: 1;
+  background-color: transparent;
+  border: none;
+  color: var(--dark-gray);
+  padding: 0.65rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: var(--text-dark);
+  background-color: rgba(220, 38, 38, 0.05);
+}
+
+.tab-btn.active {
+  background-color: var(--white);
+  color: var(--primary-red);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 700;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-red), var(--light-red));
+  border-radius: 2px 2px 0 0;
+}
+
 /* Buttons */
 .btn {
   background-color: var(--primary-red);

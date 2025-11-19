@@ -9,8 +9,11 @@
 <body>
   <div class="header">
     <div class="logo">Vibe Upload</div>
-    <div style="display: flex; gap: 0.5rem;">
-      <button class="nav-btn" onclick="navigateToBulkUpload()">อัพโหลดหลายวิดีโอ</button>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <div class="tab-buttons">
+        <button class="tab-btn active">อัพโหลดเดี่ยว</button>
+        <button class="tab-btn" onclick="navigateToBulkUpload()">อัพโหลดหลายวิดีโอ</button>
+      </div>
       <button class="nav-btn" onclick="navigateToChannels()">จัดการช่อง</button>
     </div>
   </div>
