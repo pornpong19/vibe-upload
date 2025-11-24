@@ -582,7 +582,9 @@ body {
 
 /* Preset Buttons */
 .btn-preset-delete,
-.btn-preset-save {
+.btn-preset-save,
+.btn-preset-export,
+.btn-preset-import {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -620,8 +622,32 @@ body {
   box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
 }
 
+.btn-preset-export {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.btn-preset-export:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.btn-preset-import {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.btn-preset-import:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.4);
+}
+
 .btn-preset-delete:active,
-.btn-preset-save:active {
+.btn-preset-save:active,
+.btn-preset-export:active,
+.btn-preset-import:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

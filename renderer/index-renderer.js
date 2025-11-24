@@ -351,6 +351,69 @@ async function deletePreset() {
   }
 }
 
+// Export presets
+async function exportPresets() {
+  try {
+    const result = await window.electronAPI.exportPresets();
+
+    if (result.success) {
+      showSuccess(result.message);
+    } else {
+      showError(result.message);
+    }
+  } catch (error) {
+    console.error('Error exporting presets:', error);
+    showError('เกิดข้อผิดพลาดในการ Export พรีเซ็ต');
+  }
+}
+
+// Import presets
+async function importPresets() {
+  // Check if there are existing presets
+  const currentPresets = await window.electronAPI.getPresets();
+  let importOptions = { overwrite: false, rename: false };
+
+  // If there are existing presets, ask user what to do with duplicates
+  if (currentPresets.length > 0) {
+    const choice = confirm(
+      'พบพรีเซ็ตที่มีอยู่แล้ว\n\n' +
+      'คลิก "ตกลง" เพื่อเปลี่ยนชื่อพรีเซ็ตซ้ำอัตโนมัติ\n' +
+      'คลิก "ยกเลิก" เพื่อข้ามพรีเซ็ตที่ชื่อซ้ำ'
+    );
+
+    if (choice) {
+      importOptions.rename = true;
+    }
+  }
+
+  try {
+    const result = await window.electronAPI.importPresets(importOptions);
+
+    if (result.success) {
+      showSuccess(result.message);
+
+      // Show duplicate info if any
+      if (result.duplicates && result.duplicates.length > 0) {
+        setTimeout(() => {
+          alert(
+            `พรีเซ็ตที่ถูกข้าม (ชื่อซ้ำ):\n${result.duplicates.join('\n')}`
+          );
+        }, 500);
+      }
+
+      // Reload presets list
+      await loadPresetsList();
+    } else {
+      if (!result.message.includes('ยกเลิก')) {
+        showError(result.message);
+      }
+    }
+  } catch (error) {
+    console.error('Error importing presets:', error);
+    showError('เกิดข้อผิดพลาดในการ Import พรีเซ็ต');
+  }
+}
+
 // Load channels
 async function loadChannels() {
   try {

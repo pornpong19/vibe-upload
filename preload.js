@@ -20,5 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addPreset: (presetData) => ipcRenderer.invoke('add-preset', presetData),
   updatePreset: (presetId, presetData) => ipcRenderer.invoke('update-preset', presetId, presetData),
   deletePreset: (presetId) => ipcRenderer.invoke('delete-preset', presetId),
-  getPreset: (presetId) => ipcRenderer.invoke('get-preset', presetId)
+  getPreset: (presetId) => ipcRenderer.invoke('get-preset', presetId),
+  exportPresets: () => ipcRenderer.invoke('export-presets'),
+  importPresets: (options) => ipcRenderer.invoke('import-presets', options)
 });

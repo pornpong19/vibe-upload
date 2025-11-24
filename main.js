@@ -140,3 +140,33 @@ ipcMain.handle('delete-preset', async (event, presetId) => {
 ipcMain.handle('get-preset', async (event, presetId) => {
   return await presetManager.getPreset(presetId);
 });
+
+ipcMain.handle('export-presets', async () => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    title: 'Export Presets',
+    defaultPath: `presets-${new Date().toISOString().split('T')[0]}.json`,
+    filters: [
+      { name: 'JSON', extensions: ['json'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePath) {
+    return await presetManager.exportPresets(result.filePath);
+  }
+  return { success: false, message: 'ยกเลิกการ Export' };
+});
+
+ipcMain.handle('import-presets', async (event, options) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Import Presets',
+    properties: ['openFile'],
+    filters: [
+      { name: 'JSON', extensions: ['json'] }
+    ]
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    return await presetManager.importPresets(result.filePaths[0], options);
+  }
+  return { success: false, message: 'ยกเลิกการ Import' };
+});
