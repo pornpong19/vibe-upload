@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadChannels();
   await loadPresets();
   initDragAndDrop();
+  initTimeDropdowns();
 });
 
 // Navigate
@@ -55,6 +56,32 @@ async function loadPresets() {
   } catch (error) {
     console.error('Error loading presets:', error);
   }
+}
+
+// Initialize time dropdowns
+function initTimeDropdowns() {
+  const time1Select = document.getElementById('bulkTime1');
+  const time2Select = document.getElementById('bulkTime2');
+
+  // Generate time options (every 15 minutes)
+  const timeOptions = generateTimeOptionsForBulk();
+
+  time1Select.innerHTML = '<option value="">-- เลือกเวลา --</option>' + timeOptions;
+  time2Select.innerHTML = '<option value="">-- ไม่ใช้เวลาสลับ --</option>' + timeOptions;
+}
+
+// Generate time options for bulk settings
+function generateTimeOptionsForBulk() {
+  let options = '';
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const hourStr = hour.toString().padStart(2, '0');
+      const minuteStr = minute.toString().padStart(2, '0');
+      const timeValue = `${hourStr}:${minuteStr}`;
+      options += `<option value="${timeValue}">${timeValue}</option>`;
+    }
+  }
+  return options;
 }
 
 // Initialize drag and drop
@@ -333,7 +360,12 @@ function applyBulkSettings() {
   const bulkChannel = document.getElementById('bulkChannel').value;
   const bulkPreset = document.getElementById('bulkPreset').value;
   const bulkPrivacy = document.getElementById('bulkPrivacy').value;
+  const bulkStartDate = document.getElementById('bulkStartDate').value;
+  const bulkVideosPerDay = parseInt(document.getElementById('bulkVideosPerDay').value) || 1;
+  const bulkTime1 = document.getElementById('bulkTime1').value;
+  const bulkTime2 = document.getElementById('bulkTime2').value;
 
+  // Apply basic settings
   selectedVideos.forEach(video => {
     if (bulkChannel) {
       video.channelId = bulkChannel;
@@ -346,8 +378,54 @@ function applyBulkSettings() {
     }
   });
 
+  // Apply automatic date and time scheduling
+  if (bulkStartDate && bulkTime1) {
+    applyAutomaticScheduling(bulkStartDate, bulkVideosPerDay, bulkTime1, bulkTime2);
+  } else if (bulkStartDate || bulkTime1) {
+    showWarning('กรุณาระบุทั้งวันที่เริ่มต้นและเวลาที่ 1 เพื่อใช้การตั้งเวลาอัตโนมัติ');
+  }
+
   renderVideosList();
   showSuccess('ใช้การตั้งค่ากับทุกวิดีโอสำเร็จ');
+}
+
+// Apply automatic scheduling to all videos
+function applyAutomaticScheduling(startDate, videosPerDay, time1, time2) {
+  const hasAlternatingTime = time2 && time2 !== '';
+  let currentDate = new Date(startDate);
+  let videoCountForCurrentDay = 0;
+
+  selectedVideos.forEach((video, index) => {
+    // Determine which time to use (alternate between time1 and time2 if time2 is provided)
+    let timeToUse;
+    if (hasAlternatingTime) {
+      // Alternate between time1 and time2
+      timeToUse = (index % 2 === 0) ? time1 : time2;
+    } else {
+      // Use time1 for all videos
+      timeToUse = time1;
+    }
+
+    // Format date as YYYY-MM-DD
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // Apply to video
+    video.scheduleDate = formattedDate;
+    video.scheduleTime = timeToUse;
+    video.privacyStatus = 'private'; // Auto-set to private when scheduling
+
+    // Increment counter
+    videoCountForCurrentDay++;
+
+    // Move to next day if we've reached the videos per day limit
+    if (videoCountForCurrentDay >= videosPerDay) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      videoCountForCurrentDay = 0;
+    }
+  });
 }
 
 // Update upload button
