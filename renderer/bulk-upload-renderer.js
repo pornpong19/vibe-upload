@@ -84,6 +84,45 @@ function generateTimeOptionsForBulk() {
   return options;
 }
 
+// Extract number from filename
+function extractNumberFromFilename(fileName) {
+  // Remove file extension
+  const nameWithoutExt = fileName.replace(/\.[^/.]+$/, '');
+
+  // Try to find numbers in the filename
+  const numbers = nameWithoutExt.match(/\d+/g);
+
+  if (numbers && numbers.length > 0) {
+    // Return the last number found (usually the episode/volume number)
+    return numbers[numbers.length - 1];
+  }
+
+  return null;
+}
+
+// Replace episode/volume number in title
+function replaceEpisodeNumber(title, newNumber) {
+  if (!newNumber) return title;
+
+  // Replace patterns like "Vol.001", "Vol. 001", "EP.507", "EP. 507", etc.
+  // This regex matches "Vol." or "EP." (case insensitive) followed by optional space and digits
+  const volPattern = /(\bVol\.?\s*)(\d+)/i;
+  const epPattern = /(\bEP\.?\s*)(\d+)/i;
+
+  let result = title;
+
+  // Try to replace Vol. pattern first
+  if (volPattern.test(title)) {
+    result = title.replace(volPattern, `$1${newNumber}`);
+  }
+  // If no Vol. pattern, try EP. pattern
+  else if (epPattern.test(title)) {
+    result = title.replace(epPattern, `$1${newNumber}`);
+  }
+
+  return result;
+}
+
 // Initialize drag and drop
 function initDragAndDrop() {
   const uploadArea = document.getElementById('videoUploadArea');
@@ -342,7 +381,22 @@ async function applyPresetToVideo(videoId, presetId) {
 
       if (video) {
         video.presetId = presetId;
-        video.title = preset.title || video.title;
+
+        // Get the title from preset
+        let newTitle = preset.title || video.title;
+
+        // Check if auto-rename is enabled
+        const autoRenameToggle = document.getElementById('autoRenameToggle');
+        if (autoRenameToggle && autoRenameToggle.checked) {
+          // Extract number from video filename
+          const fileNumber = extractNumberFromFilename(video.fileName);
+          if (fileNumber) {
+            // Replace Vol./EP. number in title
+            newTitle = replaceEpisodeNumber(newTitle, fileNumber);
+          }
+        }
+
+        video.title = newTitle;
         video.description = preset.description || '';
         video.tags = preset.tags || [];
         video.categoryId = preset.categoryId || '1';
