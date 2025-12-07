@@ -5,6 +5,16 @@ let channels = [];
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
   await loadChannels();
+
+  // Enable/disable "เชื่อมต่อด้วยรหัส" button based on input
+  const authCodeInput = document.getElementById('authCodeInput');
+  const addChannelWithCodeBtn = document.getElementById('addChannelWithCodeBtn');
+
+  authCodeInput.addEventListener('input', () => {
+    const hasCredentials = selectedCredentialsPath !== null;
+    const hasAuthCode = authCodeInput.value.trim().length > 0;
+    addChannelWithCodeBtn.disabled = !(hasCredentials && hasAuthCode);
+  });
 });
 
 // Format number with commas or K/M suffix
@@ -60,7 +70,7 @@ async function selectCredentials() {
   }
 }
 
-// Add channel
+// Add channel (browser auth)
 async function addChannel() {
   if (!selectedCredentialsPath) {
     showAddError('กรุณาเลือกไฟล์ credentials.json');
@@ -86,7 +96,45 @@ async function addChannel() {
     showAddError('เกิดข้อผิดพลาดในการเพิ่มช่อง');
   } finally {
     addBtn.disabled = false;
-    addBtn.textContent = 'เชื่อมต่อและเพิ่มช่อง';
+    addBtn.textContent = 'เชื่อมต่อผ่านเบราว์เซอร์ (แนะนำ)';
+  }
+}
+
+// Add channel with authorization code
+async function addChannelWithCode() {
+  if (!selectedCredentialsPath) {
+    showAddError('กรุณาเลือกไฟล์ credentials.json');
+    return;
+  }
+
+  const authCodeInput = document.getElementById('authCodeInput');
+  const authCode = authCodeInput.value.trim();
+
+  if (!authCode) {
+    showAddError('กรุณาใส่รหัสยืนยัน');
+    return;
+  }
+
+  const addBtn = document.getElementById('addChannelWithCodeBtn');
+  addBtn.disabled = true;
+  addBtn.textContent = 'กำลังเชื่อมต่อ...';
+
+  try {
+    const result = await window.electronAPI.addChannelWithCode(selectedCredentialsPath, authCode);
+
+    if (result.success) {
+      showAddSuccess(result.message);
+      resetCredentialsForm();
+      await loadChannels();
+    } else {
+      showAddError(result.message);
+    }
+  } catch (error) {
+    console.error('Error adding channel with code:', error);
+    showAddError('เกิดข้อผิดพลาดในการเพิ่มช่อง');
+  } finally {
+    addBtn.disabled = true; // Keep disabled until user enters new code
+    addBtn.textContent = 'เชื่อมต่อด้วยรหัส';
   }
 }
 
@@ -324,4 +372,6 @@ function resetCredentialsForm() {
   document.getElementById('credentialsSelected').classList.add('hidden');
   document.getElementById('credentialsUploadArea').classList.remove('has-file');
   document.getElementById('addChannelBtn').disabled = true;
+  document.getElementById('authCodeInput').value = '';
+  document.getElementById('addChannelWithCodeBtn').disabled = true;
 }

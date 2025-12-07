@@ -44,9 +44,34 @@
         </div>
       </div>
 
-      <button class="btn" id="addChannelBtn" onclick="addChannel()" disabled>
-        เชื่อมต่อและเพิ่มช่อง
-      </button>
+      <div style="margin-bottom: 1rem;">
+        <button class="btn" id="addChannelBtn" onclick="addChannel()" disabled style="width: 100%;">
+          เชื่อมต่อผ่านเบราว์เซอร์ (แนะนำ)
+        </button>
+      </div>
+
+      <div style="text-align: center; margin: 1.5rem 0; color: var(--dark-gray); font-size: 0.9rem;">
+        หรือ
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.85rem; margin-bottom: 0.5rem;">เชื่อมต่อด้วยรหัสยืนยัน</label>
+        <p style="font-size: 0.75rem; color: var(--dark-gray); margin-bottom: 0.75rem;">
+          กรณีเบราว์เซอร์ไม่เปิด: คัดลอกรหัสจาก URL ในเบราว์เซอร์มาใส่ที่นี่ (เช่น 4/0Ab32xxx)
+        </p>
+        <div style="display: flex; gap: 0.5rem;">
+          <input
+            type="text"
+            id="authCodeInput"
+            class="form-input"
+            placeholder="วางรหัสยืนยัน (เช่น 4/0Ab32xxx)"
+            style="flex: 1;"
+          />
+          <button class="btn btn-secondary" id="addChannelWithCodeBtn" onclick="addChannelWithCode()" disabled>
+            เชื่อมต่อด้วยรหัส
+          </button>
+        </div>
+      </div>
 
       <p class="text-success hidden" id="addSuccessMessage"></p>
       <p class="text-error" id="addErrorMessage"></p>

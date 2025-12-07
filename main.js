@@ -94,6 +94,10 @@ ipcMain.handle('add-channel', async (event, credentialsPath) => {
   return await channelsManager.addChannel(credentialsPath);
 });
 
+ipcMain.handle('add-channel-with-code', async (event, credentialsPath, authCode) => {
+  return await channelsManager.addChannelWithCode(credentialsPath, authCode);
+});
+
 ipcMain.handle('remove-channel', async (event, channelId) => {
   return await channelsManager.removeChannel(channelId);
 });

@@ -515,9 +515,103 @@ async function refreshChannelData(channelId) {
   }
 }
 
+// Add channel with authorization code
+async function addChannelWithCode(credentialsPath, authCode) {
+  try {
+    await initDirectories();
+
+    // Read and validate credentials
+    const credentialsContent = await fs.readFile(credentialsPath, 'utf-8');
+    const credentials = JSON.parse(credentialsContent);
+
+    // Create unique filename for this channel's credentials
+    const timestamp = Date.now();
+    const newCredentialsPath = path.join(
+      CREDENTIALS_DIR,
+      `credentials_${timestamp}.json`
+    );
+    const tokensPath = path.join(CREDENTIALS_DIR, `tokens_${timestamp}.json`);
+
+    // Copy credentials to app data directory
+    await fs.writeFile(newCredentialsPath, credentialsContent);
+
+    // Get OAuth client
+    const { client_secret, client_id } = credentials.installed || credentials.web;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      'http://localhost:3000'
+    );
+
+    // Exchange auth code for tokens
+    const { tokens } = await oAuth2Client.getToken(authCode);
+    oAuth2Client.setCredentials(tokens);
+
+    // Save tokens
+    await fs.writeFile(tokensPath, JSON.stringify(tokens, null, 2));
+
+    // Get channel info from YouTube
+    const channelInfo = await getChannelInfo(oAuth2Client);
+
+    // Get existing channels
+    const channels = await getChannels();
+
+    // Check if channel already exists
+    const existingChannel = channels.find(c => c.id === channelInfo.id);
+    if (existingChannel) {
+      // Remove the credentials file we just created
+      await fs.unlink(newCredentialsPath);
+      await fs.unlink(tokensPath);
+
+      return {
+        success: false,
+        message: 'ช่องนี้ถูกเพิ่มไว้แล้ว'
+      };
+    }
+
+    // Create channel data
+    const channelData = {
+      id: channelInfo.id,
+      name: channelInfo.name,
+      customUrl: channelInfo.customUrl,
+      thumbnailUrl: channelInfo.thumbnailUrl,
+      statistics: channelInfo.statistics,
+      credentialsPath: newCredentialsPath,
+      tokensPath: tokensPath,
+      addedAt: new Date().toISOString(),
+      authenticated: true
+    };
+
+    channels.push(channelData);
+    await saveChannels(channels);
+
+    return {
+      success: true,
+      channel: channelData,
+      message: 'เพิ่มช่องสำเร็จ!'
+    };
+  } catch (error) {
+    console.error('Error adding channel with code:', error);
+
+    let errorMessage = 'เกิดข้อผิดพลาดในการเพิ่มช่อง';
+
+    if (error.message.includes('invalid_grant')) {
+      errorMessage = 'รหัสยืนยันไม่ถูกต้องหรือหมดอายุ กรุณาลองใหม่';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return {
+      success: false,
+      message: errorMessage
+    };
+  }
+}
+
 module.exports = {
   getChannels,
   addChannel,
+  addChannelWithCode,
   removeChannel,
   getOAuthClient,
   saveTokens,

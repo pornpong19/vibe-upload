@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   selectCredentials: () => ipcRenderer.invoke('select-credentials'),
   getChannels: () => ipcRenderer.invoke('get-channels'),
   addChannel: (credentialsPath) => ipcRenderer.invoke('add-channel', credentialsPath),
+  addChannelWithCode: (credentialsPath, authCode) => ipcRenderer.invoke('add-channel-with-code', credentialsPath, authCode),
   removeChannel: (channelId) => ipcRenderer.invoke('remove-channel', channelId),
   refreshChannelData: (channelId) => ipcRenderer.invoke('refresh-channel-data', channelId),
   completeChannelAuth: (channelId) => ipcRenderer.invoke('complete-channel-auth', channelId),
