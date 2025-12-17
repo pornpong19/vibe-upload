@@ -102,7 +102,8 @@ function extractNumberFromFilename(fileName) {
 
 // Replace episode/volume number in title
 function replaceEpisodeNumber(title, newNumber) {
-  if (!newNumber) return title;
+  // Return original title if no number to replace or title is empty
+  if (!newNumber || !title || !title.trim()) return title;
 
   // Replace patterns like "Vol.001", "Vol. 001", "EP.507", "EP. 507", etc.
   // This regex matches "Vol." or "EP." (case insensitive) followed by optional space and digits
@@ -120,7 +121,8 @@ function replaceEpisodeNumber(title, newNumber) {
     result = title.replace(epPattern, `$1${newNumber}`);
   }
 
-  return result;
+  // Ensure result is not empty after replacement
+  return result && result.trim() ? result : title;
 }
 
 // Initialize drag and drop
@@ -193,11 +195,14 @@ function addVideos(files) {
 
       const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
 
+      // Ensure title is not empty - use filename without extension or "Untitled Video" as fallback
+      const defaultTitle = nameWithoutExt.trim() || 'Untitled Video';
+
       selectedVideos.push({
         id: Date.now().toString() + Math.random(),
         path: videoPath,
         fileName: fileName,
-        title: nameWithoutExt,
+        title: defaultTitle,
         description: '',
         tags: [],
         categoryId: '1',
@@ -382,8 +387,8 @@ async function applyPresetToVideo(videoId, presetId) {
       if (video) {
         video.presetId = presetId;
 
-        // Get the title from preset
-        let newTitle = preset.title || video.title;
+        // Get the title from preset - trim and check if it's not empty
+        let newTitle = preset.title && preset.title.trim() ? preset.title.trim() : video.title;
 
         // Check if auto-rename is enabled
         const autoRenameToggle = document.getElementById('autoRenameToggle');
@@ -396,12 +401,14 @@ async function applyPresetToVideo(videoId, presetId) {
           }
         }
 
-        video.title = newTitle;
+        // Final validation: ensure title is not empty after all transformations
+        video.title = newTitle && newTitle.trim() ? newTitle.trim() : video.title;
         video.description = preset.description || '';
         video.tags = preset.tags || [];
         video.categoryId = preset.categoryId || '1';
         video.privacyStatus = preset.privacyStatus || 'public';
         renderVideosList();
+        updateUploadButton();
       }
     }
   } catch (error) {
@@ -410,7 +417,7 @@ async function applyPresetToVideo(videoId, presetId) {
 }
 
 // Apply bulk settings
-function applyBulkSettings() {
+async function applyBulkSettings() {
   const bulkChannel = document.getElementById('bulkChannel').value;
   const bulkPreset = document.getElementById('bulkPreset').value;
   const bulkPrivacy = document.getElementById('bulkPrivacy').value;
@@ -420,7 +427,7 @@ function applyBulkSettings() {
   const bulkTime2 = document.getElementById('bulkTime2').value;
 
   // Apply basic settings
-  selectedVideos.forEach(video => {
+  for (const video of selectedVideos) {
     if (bulkChannel) {
       video.channelId = bulkChannel;
     }
@@ -428,9 +435,9 @@ function applyBulkSettings() {
       video.privacyStatus = bulkPrivacy;
     }
     if (bulkPreset) {
-      applyPresetToVideo(video.id, bulkPreset);
+      await applyPresetToVideo(video.id, bulkPreset);
     }
-  });
+  }
 
   // Apply automatic date and time scheduling
   if (bulkStartDate && bulkTime1) {
@@ -440,6 +447,7 @@ function applyBulkSettings() {
   }
 
   renderVideosList();
+  updateUploadButton();
   showSuccess('ใช้การตั้งค่ากับทุกวิดีโอสำเร็จ');
 }
 
@@ -511,6 +519,11 @@ async function startBulkUpload() {
     updateBulkProgress(i, selectedVideos.length, video.fileName);
 
     try {
+      // Validate title before uploading
+      if (!video.title || !video.title.trim()) {
+        throw new Error('ชื่อวิดีโอไม่ถูกต้องหรือเป็นค่าว่าง');
+      }
+
       const scheduledTime = video.scheduleDate && video.scheduleTime
         ? `${video.scheduleDate}T${video.scheduleTime}:00`
         : null;
@@ -518,7 +531,7 @@ async function startBulkUpload() {
       const uploadData = {
         channelId: video.channelId,
         videoPath: video.path,
-        title: video.title,
+        title: video.title.trim(),
         description: video.description,
         tags: video.tags.join(', '),
         categoryId: video.categoryId,

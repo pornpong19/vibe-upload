@@ -264,6 +264,31 @@ async function savePreset() {
   };
 
   try {
+    // Check if preset with this name already exists
+    const existingPreset = presets.find(p => p.name === presetName);
+
+    if (existingPreset) {
+      // Ask user if they want to overwrite
+      const shouldOverwrite = confirm(
+        `มีพรีเซ็ตชื่อ "${presetName}" อยู่แล้ว\n\nคุณต้องการบันทึกทับพรีเซ็ตเดิมหรือไม่?`
+      );
+
+      if (shouldOverwrite) {
+        // Update existing preset
+        const result = await window.electronAPI.updatePreset(existingPreset.id, presetData);
+
+        if (result.success) {
+          showSuccess('อัพเดทพรีเซ็ตสำเร็จ');
+          document.getElementById('presetName').value = '';
+          await loadPresetsList();
+        } else {
+          showError(result.message);
+        }
+      }
+      return;
+    }
+
+    // Add new preset if name doesn't exist
     const result = await window.electronAPI.addPreset(presetData);
 
     if (result.success) {
