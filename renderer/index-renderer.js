@@ -26,6 +26,11 @@ function navigateToBulkUpload() {
   window.electronAPI.navigate('bulk-upload');
 }
 
+// Navigate to upload times page
+function navigateToUploadTimes() {
+  window.electronAPI.navigate('upload-times');
+}
+
 // Initialize tags input
 function initTagsInput() {
   const tagsInput = document.getElementById('videoTags');

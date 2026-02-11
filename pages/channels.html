@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>จัดการช่อง - Vibe Upload</title>
   <link rel="stylesheet" href="../styles/main.css">
 </head>
+
 <body>
   <div class="header">
     <div class="logo">Vibe Upload</div>
     <div style="display: flex; gap: 0.5rem;">
       <button class="nav-btn" onclick="navigateToHome()">อัพโหลดเดี่ยว</button>
       <button class="nav-btn" onclick="navigateToBulkUpload()">อัพโหลดหลายวิดีโอ</button>
+      <button class="nav-btn" onclick="navigateToUploadTimes()">เวลา</button>
     </div>
   </div>
 
@@ -60,13 +63,8 @@
           กรณีเบราว์เซอร์ไม่เปิด: คัดลอกรหัสจาก URL ในเบราว์เซอร์มาใส่ที่นี่ (เช่น 4/0Ab32xxx)
         </p>
         <div style="display: flex; gap: 0.5rem;">
-          <input
-            type="text"
-            id="authCodeInput"
-            class="form-input"
-            placeholder="วางรหัสยืนยัน (เช่น 4/0Ab32xxx)"
-            style="flex: 1;"
-          />
+          <input type="text" id="authCodeInput" class="form-input" placeholder="วางรหัสยืนยัน (เช่น 4/0Ab32xxx)"
+            style="flex: 1;" />
           <button class="btn btn-secondary" id="addChannelWithCodeBtn" onclick="addChannelWithCode()" disabled>
             เชื่อมต่อด้วยรหัส
           </button>
@@ -97,7 +95,8 @@
         <li>ไปที่ <strong>Google Cloud Console</strong> และสร้างโปรเจค</li>
         <li>เปิดใช้งาน <strong>YouTube Data API v3</strong></li>
         <li>สร้าง <strong>OAuth 2.0 Client ID</strong> (Desktop app)</li>
-        <li><strong>เพิ่ม Authorized redirect URI:</strong> <code style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 3px;">http://localhost:3000</code></li>
+        <li><strong>เพิ่ม Authorized redirect URI:</strong> <code
+            style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 3px;">http://localhost:3000</code></li>
         <li>ดาวน์โหลดไฟล์ credentials.json</li>
         <li>อัพโหลดไฟล์ credentials.json ที่นี่และคลิก "เชื่อมต่อและเพิ่มช่อง"</li>
         <li><strong>เบราว์เซอร์จะเปิดขึ้นอัตโนมัติ</strong> เพื่อให้คุณยืนยันตัวตน</li>
@@ -105,15 +104,20 @@
         <li>เมื่อเห็นข้อความสำเร็จ ปิดเบราว์เซอร์และกลับมาที่แอป</li>
         <li>ช่องจะปรากฏในรายการด้านบนทันที</li>
       </ol>
-      <p style="margin-top: 1rem; padding: 1rem; background-color: #fef2f2; border-left: 4px solid var(--primary-red); font-size: 0.9rem;">
-        <strong>สำคัญ!</strong> ต้องตั้งค่า Redirect URI เป็น <code>http://localhost:3000</code> ใน Google Cloud Console ไม่เช่นนั้นจะเชื่อมต่อไม่ได้
+      <p
+        style="margin-top: 1rem; padding: 1rem; background-color: #fef2f2; border-left: 4px solid var(--primary-red); font-size: 0.9rem;">
+        <strong>สำคัญ!</strong> ต้องตั้งค่า Redirect URI เป็น <code>http://localhost:3000</code> ใน Google Cloud Console
+        ไม่เช่นนั้นจะเชื่อมต่อไม่ได้
       </p>
-      <p style="margin-top: 0.5rem; padding: 1rem; background-color: #f0f9ff; border-left: 4px solid #0284c7; font-size: 0.9rem;">
-        <strong>หมายเหตุ:</strong> ไฟล์ credentials.json และ tokens ของแต่ละช่องจะถูกเก็บแยกกัน และจะใช้ในการอัพโหลดวิดีโอไปยังช่องนั้นๆ
+      <p
+        style="margin-top: 0.5rem; padding: 1rem; background-color: #f0f9ff; border-left: 4px solid #0284c7; font-size: 0.9rem;">
+        <strong>หมายเหตุ:</strong> ไฟล์ credentials.json และ tokens ของแต่ละช่องจะถูกเก็บแยกกัน
+        และจะใช้ในการอัพโหลดวิดีโอไปยังช่องนั้นๆ
       </p>
     </div>
   </div>
 
   <script src="../renderer/channels-renderer.js"></script>
 </body>
+
 </html>

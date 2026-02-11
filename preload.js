@@ -23,5 +23,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deletePreset: (presetId) => ipcRenderer.invoke('delete-preset', presetId),
   getPreset: (presetId) => ipcRenderer.invoke('get-preset', presetId),
   exportPresets: () => ipcRenderer.invoke('export-presets'),
-  importPresets: (options) => ipcRenderer.invoke('import-presets', options)
+  importPresets: (options) => ipcRenderer.invoke('import-presets', options),
+  // Upload history APIs
+  getLatestUploads: () => ipcRenderer.invoke('get-latest-uploads'),
+  getUploadHistory: () => ipcRenderer.invoke('get-upload-history'),
+  getChannelHistory: (channelId) => ipcRenderer.invoke('get-channel-history', channelId),
+  clearUploadHistory: () => ipcRenderer.invoke('clear-upload-history')
 });

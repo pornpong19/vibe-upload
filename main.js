@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const uploadHandler = require('./src/upload-handler');
 const channelsManager = require('./src/channels-manager');
 const presetManager = require('./src/preset-manager');
+const uploadHistory = require('./src/upload-history');
 
 let mainWindow;
 
@@ -173,4 +174,21 @@ ipcMain.handle('import-presets', async (event, options) => {
     return await presetManager.importPresets(result.filePaths[0], options);
   }
   return { success: false, message: 'ยกเลิกการ Import' };
+});
+
+// Upload history handlers
+ipcMain.handle('get-latest-uploads', async () => {
+  return await uploadHistory.getLatestUploadPerChannel();
+});
+
+ipcMain.handle('get-upload-history', async () => {
+  return await uploadHistory.getUploadHistory();
+});
+
+ipcMain.handle('get-channel-history', async (event, channelId) => {
+  return await uploadHistory.getChannelHistory(channelId);
+});
+
+ipcMain.handle('clear-upload-history', async () => {
+  return await uploadHistory.clearHistory();
 });

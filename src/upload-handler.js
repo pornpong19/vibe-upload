@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { google } = require('googleapis');
 const channelsManager = require('./channels-manager');
+const uploadHistory = require('./upload-history');
 
 // Upload video to YouTube
 async function uploadVideo(uploadData, progressCallback) {
@@ -67,6 +68,19 @@ async function uploadVideo(uploadData, progressCallback) {
         }
       }
     );
+
+    // Record successful upload to history
+    try {
+      // Get channel name for display
+      const channels = await channelsManager.getChannels();
+      const channel = channels.find(c => c.id === channelId);
+      const channelName = channel ? channel.name : channelId;
+
+      await uploadHistory.recordUpload(channelId, channelName, title, `https://www.youtube.com/watch?v=${response.data.id}`, scheduledTime);
+    } catch (historyError) {
+      console.error('Error recording upload history:', historyError);
+      // Don't fail the upload if history recording fails
+    }
 
     return {
       success: true,

@@ -41,6 +41,10 @@ function navigateToBulkUpload() {
   window.electronAPI.navigate('bulk-upload');
 }
 
+function navigateToUploadTimes() {
+  window.electronAPI.navigate('upload-times');
+}
+
 // Select credentials file
 async function selectCredentials() {
   try {

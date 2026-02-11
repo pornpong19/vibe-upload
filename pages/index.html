@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vibe Upload - YouTube Video Uploader</title>
   <link rel="stylesheet" href="../styles/main.css">
 </head>
+
 <body>
   <div class="header">
     <div class="logo">Vibe Upload</div>
@@ -13,6 +15,7 @@
       <div class="tab-buttons">
         <button class="tab-btn active">อัพโหลดเดี่ยว</button>
         <button class="tab-btn" onclick="navigateToBulkUpload()">อัพโหลดหลายวิดีโอ</button>
+        <button class="tab-btn" onclick="navigateToUploadTimes()">เวลา</button>
       </div>
       <button class="nav-btn" onclick="navigateToChannels()">จัดการช่อง</button>
     </div>
@@ -62,7 +65,8 @@
         <div class="form-group" style="margin-bottom: 1rem;">
           <label class="form-label">บันทึกพรีเซ็ตใหม่</label>
           <div style="display: flex; gap: 0.5rem; align-items: stretch;">
-            <input type="text" class="form-input" id="presetName" placeholder="ชื่อพรีเซ็ต เช่น Gaming, Vlog, Tutorial" style="flex: 1;">
+            <input type="text" class="form-input" id="presetName" placeholder="ชื่อพรีเซ็ต เช่น Gaming, Vlog, Tutorial"
+              style="flex: 1;">
             <button class="btn-preset-save" onclick="savePreset()">
               <span class="btn-icon">💾</span>
               <span>บันทึก</span>
@@ -82,7 +86,8 @@
               <span>นำเข้า (Import)</span>
             </button>
           </div>
-          <p class="input-hint" style="margin-top: 0.5rem;">ส่งออกพรีเซ็ตเพื่อใช้กับเครื่องอื่น หรือนำเข้าพรีเซ็ตที่บันทึกไว้</p>
+          <p class="input-hint" style="margin-top: 0.5rem;">ส่งออกพรีเซ็ตเพื่อใช้กับเครื่องอื่น
+            หรือนำเข้าพรีเซ็ตที่บันทึกไว้</p>
         </div>
       </div>
     </div>
@@ -146,7 +151,8 @@
 
       <div class="form-group">
         <label class="form-label">ตั้งเวลาเผยแพร่ล่วงหน้า (ไม่บังคับ)</label>
-        <p class="input-hint" style="margin-top: 0; margin-bottom: 0.5rem;">หมายเหตุ: การตั้งเวลาต้องเปลี่ยนสถานะเป็น "ส่วนตัว" เท่านั้น</p>
+        <p class="input-hint" style="margin-top: 0; margin-bottom: 0.5rem;">หมายเหตุ: การตั้งเวลาต้องเปลี่ยนสถานะเป็น
+          "ส่วนตัว" เท่านั้น</p>
         <div class="grid-2">
           <div>
             <label class="form-label-small">วันที่</label>
@@ -194,4 +200,5 @@
 
   <script src="../renderer/index-renderer.js"></script>
 </body>
+
 </html>

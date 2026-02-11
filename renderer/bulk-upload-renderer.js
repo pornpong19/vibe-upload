@@ -20,6 +20,10 @@ function navigateToChannels() {
   window.electronAPI.navigate('channels');
 }
 
+function navigateToUploadTimes() {
+  window.electronAPI.navigate('upload-times');
+}
+
 // Load channels
 async function loadChannels() {
   try {

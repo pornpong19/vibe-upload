@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เวลาอัพโหลด - Vibe Upload</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Vibe Upload</div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <div class="tab-buttons">
+        <button class="tab-btn" onclick="navigateToIndex()">อัพโหลดเดี่ยว</button>
+        <button class="tab-btn" onclick="navigateToBulkUpload()">อัพโหลดหลายวิดีโอ</button>
+        <button class="tab-btn active">เวลา</button>
+      </div>
+      <button class="nav-btn" onclick="navigateToChannels()">จัดการช่อง</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">⏰ เวลาอัพโหลดล่าสุด (เฉพาะที่สำเร็จ)</h2>
+      <p style="font-size: 0.85rem; color: var(--dark-gray); margin-bottom: 1.5rem;">
+        แสดงเวลาอัพโหลดล่าสุดของแต่ละช่อง เพื่อใช้ตรวจสอบโควต้า 24 ชั่วโมง
+      </p>
+
+      <div id="latestUploadsContainer">
+        <div class="upload-times-loading">
+          <p style="text-align: center; color: var(--dark-gray); padding: 2rem;">กำลังโหลด...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload History -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-red);">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin: 0;">📋 ประวัติการอัพโหลดทั้งหมด</h2>
+        <button class="btn-small btn-danger" onclick="clearAllHistory()" style="padding: 0.5rem 1rem;">🗑️ ล้างประวัติ</button>
+      </div>
+
+      <div id="historyContainer">
+        <div class="upload-times-loading">
+          <p style="text-align: center; color: var(--dark-gray); padding: 2rem;">กำลังโหลด...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../renderer/upload-times-renderer.js"></script>
+</body>
+</html>
