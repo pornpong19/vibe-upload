@@ -757,122 +757,119 @@ body {
   border: 2px dashed var(--gray);
 }
 
-.upload-times-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1.25rem;
+/* Latest Uploads - Compact List */
+.latest-uploads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.upload-time-card {
-  background-color: var(--white);
-  border: 2px solid var(--gray);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.upload-time-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.upload-time-card.quota-warning {
-  border-color: #fbbf24;
-  border-left: 5px solid #ef4444;
-}
-
-.upload-time-card.quota-ok {
-  border-color: #10b981;
-  border-left: 5px solid #10b981;
-}
-
-.upload-time-header {
-  padding: 1rem 1.25rem;
-  background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
-  border-bottom: 1px solid var(--gray);
-}
-
-.upload-time-channel {
+.latest-upload-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.upload-time-status-icon {
-  font-size: 1.5rem;
+.latest-upload-item:hover {
+  background-color: var(--white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.latest-upload-item.quota-warning {
+  border-left: 4px solid #ef4444;
+  border-color: #fbbf24;
+  border-left-color: #ef4444;
+}
+
+.latest-upload-item.quota-ok {
+  border-left: 4px solid #10b981;
+  border-color: #10b981;
+}
+
+.latest-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.latest-item-icon {
+  font-size: 1.1rem;
   line-height: 1;
 }
 
-.upload-time-channel-name {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text-dark);
-}
-
-.upload-time-channel-id {
-  font-size: 0.75rem;
-  color: var(--dark-gray);
-  font-family: monospace;
-}
-
-.upload-time-body {
-  padding: 1.25rem;
-}
-
-.upload-time-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.upload-time-info:last-of-type {
-  border-bottom: none;
-}
-
-.upload-time-label {
-  font-size: 0.85rem;
-  color: var(--dark-gray);
-  font-weight: 500;
-}
-
-.upload-time-value {
+.latest-item-channel-name {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--text-dark);
-  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.upload-time-video-title {
-  max-width: 200px;
+.latest-item-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.latest-item-video-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-dark);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.85rem;
 }
 
-.upload-time-quota-status {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+.latest-item-meta {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+
+.latest-item-scheduled {
+  font-weight: 600;
+  color: #2563eb;
+  background-color: #eff6ff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #bfdbfe;
+}
+
+.latest-item-right {
+  flex-shrink: 0;
+}
+
+.latest-item-quota {
   font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
   text-align: center;
-  font-size: 0.9rem;
 }
 
-.upload-time-quota-status.quota-warning {
+.latest-item-quota.quota-warning {
   background: linear-gradient(135deg, #fef3c7 0%, #fee2e2 100%);
   color: #dc2626;
-  border: 2px solid #fbbf24;
+  border: 1px solid #fbbf24;
   animation: quotaPulse 2s ease-in-out infinite;
 }
 
-.upload-time-quota-status.quota-ok {
+.latest-item-quota.quota-ok {
   background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
   color: #059669;
-  border: 2px solid #10b981;
+  border: 1px solid #10b981;
 }
 
 @keyframes quotaPulse {
@@ -973,11 +970,6 @@ body {
 }
 
 /* Scheduled Time Styles */
-.upload-time-scheduled {
-  color: #2563eb !important;
-  font-weight: 700 !important;
-}
-
 .history-item-scheduled {
   font-weight: 600;
   color: #2563eb;

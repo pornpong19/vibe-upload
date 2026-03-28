@@ -133,7 +133,7 @@ async function loadLatestUploads() {
     // Sort by upload time (most recent first)
     latestUploads.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
 
-    let html = '<div class="upload-times-grid">';
+    let html = '<div class="latest-uploads-list">';
 
     latestUploads.forEach(upload => {
       const withinQuota = isWithinQuota(upload.uploadedAt);
@@ -144,45 +144,29 @@ async function loadLatestUploads() {
       const statusClass = withinQuota ? 'quota-warning' : 'quota-ok';
       const statusIcon = withinQuota ? '🔴' : '🟢';
       const statusText = withinQuota
-        ? `ยังไม่ครบ 24 ชม. (เหลืออีก ${resetTime})`
-        : 'ครบ 24 ชม. แล้ว พร้อมอัพโหลด!';
+        ? `เหลืออีก ${resetTime}`
+        : '✅ พร้อมอัพโหลด';
+
+      const scheduledHtml = upload.scheduledTime
+        ? `<span class="latest-item-scheduled">📅 ${formatScheduledTime(upload.scheduledTime)}</span>`
+        : '';
 
       html += `
-        <div class="upload-time-card ${statusClass}">
-          <div class="upload-time-header">
-            <div class="upload-time-channel">
-              <span class="upload-time-status-icon">${statusIcon}</span>
-              <div>
-                <div class="upload-time-channel-name">${upload.channelName}</div>
-                <div class="upload-time-channel-id">${upload.channelId}</div>
-              </div>
+        <div class="latest-upload-item ${statusClass}">
+          <div class="latest-item-left">
+            <span class="latest-item-icon">${statusIcon}</span>
+            <div class="latest-item-channel-name">${upload.channelName}</div>
+          </div>
+          <div class="latest-item-center">
+            <div class="latest-item-video-title">🎬 ${upload.videoTitle}</div>
+            <div class="latest-item-meta">
+              <span>🕐 ${formattedTime}</span>
+              <span>⏳ ${timeDiff}</span>
+              ${scheduledHtml}
             </div>
           </div>
-
-          <div class="upload-time-body">
-            <div class="upload-time-info">
-              <div class="upload-time-label">🕐 อัพโหลดล่าสุด</div>
-              <div class="upload-time-value">${formattedTime}</div>
-            </div>
-
-            <div class="upload-time-info">
-              <div class="upload-time-label">⏳ เวลาที่ผ่านไป</div>
-              <div class="upload-time-value">${timeDiff}</div>
-            </div>
-
-            <div class="upload-time-info">
-              <div class="upload-time-label">📅 ตั้งเวลาลงยูทูป</div>
-              <div class="upload-time-value ${upload.scheduledTime ? 'upload-time-scheduled' : ''}">${upload.scheduledTime ? formatScheduledTime(upload.scheduledTime) : '<span style="color: var(--dark-gray); font-weight: 500;">ไม่ได้ตั้งเวลา</span>'}</div>
-            </div>
-
-            <div class="upload-time-info">
-              <div class="upload-time-label">🎬 คลิปล่าสุด</div>
-              <div class="upload-time-value upload-time-video-title">${upload.videoTitle}</div>
-            </div>
-
-            <div class="upload-time-quota-status ${statusClass}">
-              ${statusText}
-            </div>
+          <div class="latest-item-right">
+            <div class="latest-item-quota ${statusClass}">${statusText}</div>
           </div>
         </div>
       `;
