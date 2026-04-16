@@ -28,5 +28,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getLatestUploads: () => ipcRenderer.invoke('get-latest-uploads'),
   getUploadHistory: () => ipcRenderer.invoke('get-upload-history'),
   getChannelHistory: (channelId) => ipcRenderer.invoke('get-channel-history', channelId),
-  clearUploadHistory: () => ipcRenderer.invoke('clear-upload-history')
+  clearUploadHistory: () => ipcRenderer.invoke('clear-upload-history'),
+  deleteUploadHistoryItem: (id) => ipcRenderer.invoke('delete-upload-history-item', id)
 });

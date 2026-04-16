@@ -192,3 +192,7 @@ ipcMain.handle('get-channel-history', async (event, channelId) => {
 ipcMain.handle('clear-upload-history', async () => {
   return await uploadHistory.clearHistory();
 });
+
+ipcMain.handle('delete-upload-history-item', async (event, id) => {
+  return await uploadHistory.deleteHistoryEntry(id);
+});

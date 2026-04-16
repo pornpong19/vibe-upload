@@ -72,10 +72,27 @@ async function clearHistory() {
     return { success: true, message: 'ล้างประวัติสำเร็จ' };
 }
 
+// Delete a specific history entry
+async function deleteHistoryEntry(id) {
+    let history = await getUploadHistory();
+    const initialLength = history.length;
+
+    // Filter out the entry with the match ID
+    history = history.filter(entry => entry.id !== id);
+
+    if (history.length < initialLength) {
+        await saveUploadHistory(history);
+        return { success: true, message: 'ลบรายการบนประวัติสำเร็จ' };
+    }
+
+    return { success: false, message: 'ไม่พบรายการที่ต้องการลบ' };
+}
+
 module.exports = {
     getUploadHistory,
     recordUpload,
     getLatestUploadPerChannel,
     getChannelHistory,
-    clearHistory
+    clearHistory,
+    deleteHistoryEntry
 };

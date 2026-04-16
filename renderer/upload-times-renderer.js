@@ -165,8 +165,9 @@ async function loadLatestUploads() {
               ${scheduledHtml}
             </div>
           </div>
-          <div class="latest-item-right">
+          <div class="latest-item-right" style="display: flex; gap: 0.5rem; align-items: center;">
             <div class="latest-item-quota ${statusClass}">${statusText}</div>
+            <button class="btn-small btn-danger" onclick="deleteHistoryItem('${upload.id}')" style="padding: 0.3rem 0.6rem;" title="ลบรายการนี้">🗑️</button>
           </div>
         </div>
       `;
@@ -225,11 +226,14 @@ async function loadFullHistory() {
               ${scheduledDisplay}
             </div>
           </div>
-          ${entry.videoUrl ? `
-            <a href="#" class="history-item-link" onclick="openVideoUrl('${entry.videoUrl}'); return false;">
-              🔗 เปิด
-            </a>
-          ` : ''}
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            ${entry.videoUrl ? `
+              <a href="#" class="history-item-link" onclick="openVideoUrl('${entry.videoUrl}'); return false;">
+                🔗 เปิด
+              </a>
+            ` : ''}
+            <button class="btn-small btn-danger" onclick="deleteHistoryItem('${entry.id}')" style="padding: 0.3rem 0.6rem;" title="ลบรายการนี้">🗑️</button>
+          </div>
         </div>
       `;
     });
@@ -266,6 +270,26 @@ async function clearAllHistory() {
     }
   } catch (error) {
     console.error('Error clearing history:', error);
+  }
+}
+
+// Delete specific history item
+async function deleteHistoryItem(id) {
+  if (!confirm('คุณต้องการลบประวัติรายการนี้ใช่หรือไม่?')) {
+    return;
+  }
+
+  try {
+    const result = await window.electronAPI.deleteUploadHistoryItem(id);
+    if (result.success) {
+      await loadLatestUploads();
+      await loadFullHistory();
+    } else {
+      alert('ไม่สามารถลบรายการได้: ' + result.message);
+    }
+  } catch (error) {
+    console.error('Error deleting history item:', error);
+    alert('เกิดข้อผิดพลาดในการลบรายการ');
   }
 }
 
