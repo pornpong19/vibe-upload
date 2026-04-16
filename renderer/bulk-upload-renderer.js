@@ -3,12 +3,22 @@ let selectedVideos = [];
 let channels = [];
 let presets = [];
 
+// Utility: Escape HTML special characters for safe rendering in attributes
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
   await loadChannels();
   await loadPresets();
   initDragAndDrop();
   initTimeDropdowns();
+  initAiTitleToggle();
+  initSchedulingPreview();
+  await loadSavedApiKey();
 });
 
 // Navigate
@@ -86,6 +96,171 @@ function generateTimeOptionsForBulk() {
     }
   }
   return options;
+}
+
+// === AI Title Generator Functions ===
+
+// Initialize AI title toggle
+function initAiTitleToggle() {
+  const aiToggle = document.getElementById('aiTitleToggle');
+  const aiSettings = document.getElementById('aiTitleSettings');
+  const autoRenameGroup = document.getElementById('autoRenameGroup');
+
+  aiToggle.addEventListener('change', function () {
+    if (this.checked) {
+      aiSettings.classList.remove('hidden');
+      autoRenameGroup.classList.add('disabled-by-ai');
+    } else {
+      aiSettings.classList.add('hidden');
+      autoRenameGroup.classList.remove('disabled-by-ai');
+    }
+  });
+
+  // Save API key on blur
+  const apiKeyInput = document.getElementById('geminiApiKey');
+  apiKeyInput.addEventListener('blur', async function () {
+    if (this.value.trim()) {
+      await window.electronAPI.saveGeminiApiKey(this.value.trim());
+    }
+  });
+}
+
+// Load saved API key
+async function loadSavedApiKey() {
+  try {
+    const result = await window.electronAPI.getGeminiApiKey();
+    if (result.success && result.apiKey) {
+      document.getElementById('geminiApiKey').value = result.apiKey;
+    }
+  } catch (error) {
+    console.error('Error loading API key:', error);
+  }
+}
+
+// Toggle API key visibility
+function toggleApiKeyVisibility() {
+  const apiKeyInput = document.getElementById('geminiApiKey');
+  const toggleBtn = document.getElementById('toggleApiKeyBtn');
+
+  if (apiKeyInput.type === 'password') {
+    apiKeyInput.type = 'text';
+    toggleBtn.textContent = '🙈';
+  } else {
+    apiKeyInput.type = 'password';
+    toggleBtn.textContent = '👁️';
+  }
+}
+
+// Generate AI titles for all videos
+async function generateAiTitlesForVideos() {
+  const apiKey = document.getElementById('geminiApiKey').value.trim();
+  const topic = document.getElementById('aiTopic').value.trim();
+  const volEpType = document.querySelector('input[name="volEpType"]:checked').value;
+  const position = document.querySelector('input[name="volEpPosition"]:checked').value;
+
+  // Collect selected languages
+  const langCheckboxes = document.querySelectorAll('input[name="aiLang"]:checked');
+  const languages = Array.from(langCheckboxes).map(cb => cb.value);
+
+  if (!apiKey) {
+    showError('กรุณาใส่ Gemini API Key');
+    return false;
+  }
+
+  if (!topic) {
+    showError('กรุณาใส่หัวข้อ / ธีมของคลิป');
+    return false;
+  }
+
+  if (languages.length === 0) {
+    showError('กรุณาเลือกภาษาอย่างน้อย 1 ภาษา');
+    return false;
+  }
+
+  if (selectedVideos.length === 0) {
+    showError('กรุณาเลือกวิดีโอก่อน');
+    return false;
+  }
+
+  // Save API key
+  await window.electronAPI.saveGeminiApiKey(apiKey);
+
+  // Prepare video info (extract numbers from filenames)
+  const videoInfos = selectedVideos.map(video => {
+    const number = extractNumberFromFilename(video.fileName);
+    return {
+      fileName: video.fileName,
+      number: number || '1'
+    };
+  });
+
+  // Show loading state
+  showAiLoading(true);
+
+  try {
+    const result = await window.electronAPI.generateAiTitles(
+      apiKey, topic, videoInfos, volEpType, position, languages
+    );
+
+    if (result.success) {
+      // Apply titles to videos
+      result.titles.forEach((title, index) => {
+        if (index < selectedVideos.length) {
+          selectedVideos[index].title = title;
+        }
+      });
+      showAiLoading(false);
+      return true;
+    } else {
+      showAiLoading(false);
+      showError('AI สร้างชื่อล้มเหลว: ' + result.message);
+      return false;
+    }
+  } catch (error) {
+    showAiLoading(false);
+    showError('เกิดข้อผิดพลาดในการสร้างชื่อ: ' + error.message);
+    return false;
+  }
+}
+
+// Show/hide AI loading state
+function showAiLoading(show) {
+  const existingLoading = document.getElementById('aiLoadingIndicator');
+  if (existingLoading) {
+    existingLoading.remove();
+  }
+
+  if (show) {
+    const loadingHtml = `
+      <div class="ai-loading" id="aiLoadingIndicator">
+        <div class="ai-loading-spinner"></div>
+        <span style="font-weight: 600; color: #6d28d9;">🤖 AI กำลังสร้างชื่อคลิป... กรุณารอสักครู่</span>
+      </div>
+    `;
+    const videosListCard = document.getElementById('videosListCard');
+    videosListCard.insertAdjacentHTML('beforebegin', loadingHtml);
+  }
+}
+
+// Update title character counter
+function updateTitleCounter(videoId, value) {
+  // Also update the video field
+  updateVideoField(videoId, 'title', value);
+
+  const counter = document.getElementById('counter-' + CSS.escape(videoId));
+  if (counter) {
+    const len = value.length;
+    counter.textContent = `${len}/100`;
+    counter.className = 'title-char-counter';
+
+    if (len >= 100) {
+      counter.classList.add('counter-danger');
+    } else if (len >= 80) {
+      counter.classList.add('counter-warning');
+    } else if (len > 0) {
+      counter.classList.add('counter-ok');
+    }
+  }
 }
 
 // Extract number from filename
@@ -263,8 +438,13 @@ function renderVideosList() {
       <div class="video-item-body">
         <div class="form-group" style="margin-bottom: 0.75rem;">
           <label class="form-label-small">ชื่อวิดีโอ</label>
-          <input type="text" class="form-input" value="${video.title}"
-            onchange="updateVideoField('${video.id}', 'title', this.value)">
+          <div class="title-input-wrapper">
+            <input type="text" class="form-input" value="${escapeHtml(video.title)}" maxlength="100"
+              id="title-${video.id}"
+              oninput="updateTitleCounter('${video.id}', this.value)"
+              onchange="updateVideoField('${video.id}', 'title', this.value)">
+            <span class="title-char-counter ${video.title.length >= 100 ? 'counter-danger' : video.title.length >= 80 ? 'counter-warning' : video.title.length > 0 ? 'counter-ok' : ''}" id="counter-${video.id}">${video.title.length}/100</span>
+          </div>
         </div>
 
         <div class="grid-3" style="margin-bottom: 0.75rem;">
@@ -427,8 +607,10 @@ async function applyBulkSettings() {
   const bulkPrivacy = document.getElementById('bulkPrivacy').value;
   const bulkStartDate = document.getElementById('bulkStartDate').value;
   const bulkVideosPerDay = parseInt(document.getElementById('bulkVideosPerDay').value) || 1;
+  const bulkDaysInterval = parseInt(document.getElementById('bulkDaysInterval').value) || 1;
   const bulkTime1 = document.getElementById('bulkTime1').value;
   const bulkTime2 = document.getElementById('bulkTime2').value;
+  const aiTitleEnabled = document.getElementById('aiTitleToggle').checked;
 
   // Apply basic settings
   for (const video of selectedVideos) {
@@ -443,9 +625,20 @@ async function applyBulkSettings() {
     }
   }
 
+  // Generate AI titles if enabled
+  if (aiTitleEnabled) {
+    const success = await generateAiTitlesForVideos();
+    if (!success) {
+      // Still apply other settings even if AI fails
+      renderVideosList();
+      updateUploadButton();
+      return;
+    }
+  }
+
   // Apply automatic date and time scheduling
   if (bulkStartDate && bulkTime1) {
-    applyAutomaticScheduling(bulkStartDate, bulkVideosPerDay, bulkTime1, bulkTime2);
+    applyAutomaticScheduling(bulkStartDate, bulkVideosPerDay, bulkDaysInterval, bulkTime1, bulkTime2);
   } else if (bulkStartDate || bulkTime1) {
     showWarning('กรุณาระบุทั้งวันที่เริ่มต้นและเวลาที่ 1 เพื่อใช้การตั้งเวลาอัตโนมัติ');
   }
@@ -456,7 +649,7 @@ async function applyBulkSettings() {
 }
 
 // Apply automatic scheduling to all videos
-function applyAutomaticScheduling(startDate, videosPerDay, time1, time2) {
+function applyAutomaticScheduling(startDate, videosPerDay, daysInterval, time1, time2) {
   const hasAlternatingTime = time2 && time2 !== '';
   let currentDate = new Date(startDate);
   let videoCountForCurrentDay = 0;
@@ -486,12 +679,30 @@ function applyAutomaticScheduling(startDate, videosPerDay, time1, time2) {
     // Increment counter
     videoCountForCurrentDay++;
 
-    // Move to next day if we've reached the videos per day limit
+    // Move to next date if we've reached the videos per day limit
     if (videoCountForCurrentDay >= videosPerDay) {
-      currentDate.setDate(currentDate.getDate() + 1);
+      currentDate.setDate(currentDate.getDate() + daysInterval);
       videoCountForCurrentDay = 0;
     }
   });
+}
+
+// Initialize scheduling preview updater
+function initSchedulingPreview() {
+  const videosPerDayInput = document.getElementById('bulkVideosPerDay');
+  const daysIntervalInput = document.getElementById('bulkDaysInterval');
+
+  const updatePreview = () => {
+    const vpd = parseInt(videosPerDayInput.value) || 1;
+    const di = parseInt(daysIntervalInput.value) || 1;
+    const preview = document.getElementById('schedulingPreview');
+    if (preview) {
+      preview.textContent = `${vpd} คลิป / ทุก ${di} วัน`;
+    }
+  };
+
+  videosPerDayInput.addEventListener('input', updatePreview);
+  daysIntervalInput.addEventListener('input', updatePreview);
 }
 
 // Update upload button

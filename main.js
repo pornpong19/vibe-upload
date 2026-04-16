@@ -5,6 +5,7 @@ const uploadHandler = require('./src/upload-handler');
 const channelsManager = require('./src/channels-manager');
 const presetManager = require('./src/preset-manager');
 const uploadHistory = require('./src/upload-history');
+const aiTitleGenerator = require('./src/ai-title-generator');
 
 let mainWindow;
 
@@ -195,4 +196,32 @@ ipcMain.handle('clear-upload-history', async () => {
 
 ipcMain.handle('delete-upload-history-item', async (event, id) => {
   return await uploadHistory.deleteHistoryEntry(id);
+});
+
+// AI Title Generator handlers
+ipcMain.handle('generate-ai-titles', async (event, apiKey, topic, videoInfos, volEpType, position, languages) => {
+  try {
+    const titles = await aiTitleGenerator.generateTitles(apiKey, topic, videoInfos, volEpType, position, languages);
+    return { success: true, titles };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+ipcMain.handle('save-gemini-api-key', async (event, apiKey) => {
+  try {
+    await aiTitleGenerator.saveApiKey(apiKey);
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+ipcMain.handle('get-gemini-api-key', async () => {
+  try {
+    const apiKey = await aiTitleGenerator.getApiKey();
+    return { success: true, apiKey };
+  } catch (error) {
+    return { success: false, apiKey: '' };
+  }
 });
