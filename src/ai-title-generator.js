@@ -39,9 +39,10 @@ async function getApiKey() {
  * @param {string} volEpType - "Vol." or "EP."
  * @param {string} position - "front" or "back"
  * @param {Array} languages - Array of language strings e.g. ["ไทย", "English", "한국어"]
+ * @param {Array} requiredWords - Array of words that must appear in every title
  * @returns {Array} Array of generated titles
  */
-async function generateTitles(apiKey, topic, videoInfos, volEpType, position, languages) {
+async function generateTitles(apiKey, topic, videoInfos, volEpType, position, languages, requiredWords) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
@@ -65,6 +66,11 @@ async function generateTitles(apiKey, topic, videoInfos, volEpType, position, la
     ? `ชื่อต้องผสมภาษาต่อไปนี้: ${langList} (ใช้หลายภาษาในชื่อเดียวกันได้)`
     : `ชื่อต้องเป็นภาษา${langList}`;
 
+  // Build required words instruction
+  const requiredWordsInstruction = requiredWords && requiredWords.length > 0
+    ? `\n8. ทุกชื่อต้องมีคำว่า "${requiredWords.join('" และ "')}" อยู่ในชื่อด้วยเสมอ`
+    : '';
+
   const prompt = `คุณเป็นผู้เชี่ยวชาญในการตั้งชื่อวิดีโอ YouTube ที่ดึงดูดผู้ชม
 
 สร้างชื่อวิดีโอ YouTube จำนวน ${videoCount} ชื่อ
@@ -78,7 +84,7 @@ async function generateTitles(apiKey, topic, videoInfos, volEpType, position, la
 4. แต่ละชื่อต้องมีความหลากหลาย ไม่ซ้ำกัน
 5. ห้ามใส่เครื่องหมายคำพูด ("") รอบชื่อ
 6. ห้ามใส่ตัวเลขลำดับ (1. 2. 3.) หน้าชื่อ
-7. ห้ามใส่ Vol. หรือ EP. ในชื่อ (ระบบจะเพิ่มให้เอง)
+7. ห้ามใส่ Vol. หรือ EP. ในชื่อ (ระบบจะเพิ่มให้เอง)${requiredWordsInstruction}
 
 ตอบเป็นรายการ แต่ละบรรทัดเป็นชื่อ 1 ชื่อเท่านั้น ไม่ต้องมีคำอธิบายเพิ่มเติม จำนวน ${videoCount} ชื่อ`;
 

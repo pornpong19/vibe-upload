@@ -162,6 +162,12 @@ async function generateAiTitlesForVideos() {
   const langCheckboxes = document.querySelectorAll('input[name="aiLang"]:checked');
   const languages = Array.from(langCheckboxes).map(cb => cb.value);
 
+  // Collect required words
+  const requiredWordsRaw = document.getElementById('aiRequiredWords').value.trim();
+  const requiredWords = requiredWordsRaw
+    ? requiredWordsRaw.split(',').map(w => w.trim()).filter(w => w.length > 0)
+    : [];
+
   if (!apiKey) {
     showError('กรุณาใส่ Gemini API Key');
     return false;
@@ -199,7 +205,7 @@ async function generateAiTitlesForVideos() {
 
   try {
     const result = await window.electronAPI.generateAiTitles(
-      apiKey, topic, videoInfos, volEpType, position, languages
+      apiKey, topic, videoInfos, volEpType, position, languages, requiredWords
     );
 
     if (result.success) {
@@ -247,7 +253,7 @@ function updateTitleCounter(videoId, value) {
   // Also update the video field
   updateVideoField(videoId, 'title', value);
 
-  const counter = document.getElementById('counter-' + CSS.escape(videoId));
+  const counter = document.getElementById('counter-' + videoId);
   if (counter) {
     const len = value.length;
     counter.textContent = `${len}/100`;
@@ -378,7 +384,7 @@ function addVideos(files) {
       const defaultTitle = nameWithoutExt.trim() || 'Untitled Video';
 
       selectedVideos.push({
-        id: Date.now().toString() + Math.random(),
+        id: Date.now().toString() + Math.random().toString().slice(2),
         path: videoPath,
         fileName: fileName,
         title: defaultTitle,

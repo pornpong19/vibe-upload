@@ -31,8 +31,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   clearUploadHistory: () => ipcRenderer.invoke('clear-upload-history'),
   deleteUploadHistoryItem: (id) => ipcRenderer.invoke('delete-upload-history-item', id),
   // AI Title Generator APIs
-  generateAiTitles: (apiKey, topic, videoInfos, volEpType, position, languages) =>
-    ipcRenderer.invoke('generate-ai-titles', apiKey, topic, videoInfos, volEpType, position, languages),
+  generateAiTitles: (apiKey, topic, videoInfos, volEpType, position, languages, requiredWords) =>
+    ipcRenderer.invoke('generate-ai-titles', apiKey, topic, videoInfos, volEpType, position, languages, requiredWords),
   saveGeminiApiKey: (apiKey) => ipcRenderer.invoke('save-gemini-api-key', apiKey),
   getGeminiApiKey: () => ipcRenderer.invoke('get-gemini-api-key')
 });

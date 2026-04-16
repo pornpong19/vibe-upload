@@ -199,9 +199,9 @@ ipcMain.handle('delete-upload-history-item', async (event, id) => {
 });
 
 // AI Title Generator handlers
-ipcMain.handle('generate-ai-titles', async (event, apiKey, topic, videoInfos, volEpType, position, languages) => {
+ipcMain.handle('generate-ai-titles', async (event, apiKey, topic, videoInfos, volEpType, position, languages, requiredWords) => {
   try {
-    const titles = await aiTitleGenerator.generateTitles(apiKey, topic, videoInfos, volEpType, position, languages);
+    const titles = await aiTitleGenerator.generateTitles(apiKey, topic, videoInfos, volEpType, position, languages, requiredWords);
     return { success: true, titles };
   } catch (error) {
     return { success: false, message: error.message };
